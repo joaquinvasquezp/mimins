@@ -1,0 +1,190 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// ==========================================
+// Catálogos base
+// ==========================================
+
+model Colegio {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @unique
+  notas     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  precios  PrecioProducto[]
+  items    ItemPedido[]
+  stocks   Stock[]
+
+  @@map("colegios")
+}
+
+model Producto {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  categoria String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  precios  PrecioProducto[]
+  items    ItemPedido[]
+  stocks   Stock[]
+
+  @@map("productos")
+}
+
+model Talla {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @unique
+  orden     Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  precios  PrecioProducto[]
+  items    ItemPedido[]
+  stocks   Stock[]
+
+  @@map("tallas")
+}
+
+// ==========================================
+// Precios e historial
+// ==========================================
+
+model PrecioProducto {
+  id          Int      @id @default(autoincrement())
+  productoId  Int      @map("producto_id")
+  colegioId   Int      @map("colegio_id")
+  tallaId     Int      @map("talla_id")
+  precioVenta Float    @map("precio_venta")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  producto  Producto @relation(fields: [productoId], references: [id])
+  colegio   Colegio  @relation(fields: [colegioId], references: [id])
+  talla     Talla    @relation(fields: [tallaId], references: [id])
+  historial HistorialPrecio[]
+
+  @@unique([productoId, colegioId, tallaId])
+  @@map("precios_producto")
+}
+
+model HistorialPrecio {
+  id               Int      @id @default(autoincrement())
+  precioProductoId Int      @map("precio_producto_id")
+  precioVentaAnt   Float    @map("precio_venta_ant")
+  precioVentaNew   Float    @map("precio_venta_new")
+  fechaCambio      DateTime @map("fecha_cambio")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  precioProducto PrecioProducto @relation(fields: [precioProductoId], references: [id])
+
+  @@map("historial_precios")
+}
+
+// ==========================================
+// Clientes
+// ==========================================
+
+model Cliente {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  telefono  String
+  correo    String?
+  notas     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  pedidos Pedido[]
+
+  @@map("clientes")
+}
+
+// ==========================================
+// Pedidos
+// ==========================================
+
+model Pedido {
+  id                   Int       @id @default(autoincrement())
+  clienteId            Int       @map("cliente_id")
+  estado               String    @default("COTIZADO")
+  fechaPedido          DateTime  @map("fecha_pedido")
+  fechaEntregaEstimada DateTime? @map("fecha_entrega_estimada")
+  fechaEntregaReal     DateTime? @map("fecha_entrega_real")
+  total                Float
+  notas                String?
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  cliente Cliente      @relation(fields: [clienteId], references: [id])
+  items   ItemPedido[]
+  pagos   Pago[]
+
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int      @map("pedido_id")
+  productoId     Int      @map("producto_id")
+  colegioId      Int      @map("colegio_id")
+  tallaId        Int      @map("talla_id")
+  cantidad       Int
+  precioUnitario Float    @map("precio_unitario")
+  detalle        String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  pedido   Pedido   @relation(fields: [pedidoId], references: [id])
+  producto Producto @relation(fields: [productoId], references: [id])
+  colegio  Colegio  @relation(fields: [colegioId], references: [id])
+  talla    Talla    @relation(fields: [tallaId], references: [id])
+
+  @@map("items_pedido")
+}
+
+// ==========================================
+// Pagos
+// ==========================================
+
+model Pago {
+  id        Int      @id @default(autoincrement())
+  pedidoId  Int      @map("pedido_id")
+  monto     Float
+  metodo    String   // EFECTIVO, TRANSFERENCIA
+  fechaPago DateTime @map("fecha_pago")
+  notas     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  pedido Pedido @relation(fields: [pedidoId], references: [id])
+
+  @@map("pagos")
+}
+
+// ==========================================
+// Stock
+// ==========================================
+
+model Stock {
+  id         Int      @id @default(autoincrement())
+  productoId Int      @map("producto_id")
+  colegioId  Int      @map("colegio_id")
+  tallaId    Int      @map("talla_id")
+  cantidad   Int
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  producto Producto @relation(fields: [productoId], references: [id])
+  colegio  Colegio  @relation(fields: [colegioId], references: [id])
+  talla    Talla    @relation(fields: [tallaId], references: [id])
+
+  @@unique([productoId, colegioId, tallaId])
+  @@map("stocks")
+}

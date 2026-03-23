@@ -21,12 +21,14 @@ import { createCliente } from "@/app/clientes/actions";
 import { todayISO } from "@/lib/utils";
 
 interface PedidoCreateFormProps {
-  clientes: { id: number; nombre: string }[];
+  clientes: { id: number; nombre: string; colegio: { nombre: string } }[];
+  colegios: { id: number; nombre: string }[];
   onSuccess: () => void;
 }
 
 export default function PedidoCreateForm({
   clientes: clientesInicial,
+  colegios,
   onSuccess,
 }: PedidoCreateFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -35,8 +37,10 @@ export default function PedidoCreateForm({
   const [clientes, setClientes] = useState(clientesInicial);
   const [clienteId, setClienteId] = useState<string>("");
   const [showNewCliente, setShowNewCliente] = useState(false);
+  const [newClienteColegioId, setNewClienteColegioId] = useState("");
 
-  const clienteItems = clientes.map((c) => ({ value: String(c.id), label: c.nombre }));
+  const clienteItems = clientes.map((c) => ({ value: String(c.id), label: `${c.nombre} (${c.colegio.nombre})` }));
+  const colegioItems = colegios.map((c) => ({ value: String(c.id), label: c.nombre }));
 
   async function handleSubmit(formData: FormData) {
     formData.set("clienteId", clienteId);
@@ -56,6 +60,7 @@ export default function PedidoCreateForm({
   }
 
   async function handleCreateCliente(formData: FormData) {
+    formData.set("colegioId", newClienteColegioId);
     const result = await createCliente(formData);
 
     if (result.error) {
@@ -64,10 +69,12 @@ export default function PedidoCreateForm({
     }
 
     const nombre = formData.get("nombre") as string;
+    const colegioNombre = colegios.find((c) => String(c.id) === newClienteColegioId)?.nombre ?? "";
     const newId = String(result.clienteId);
-    setClientes((prev) => [...prev, { id: result.clienteId!, nombre: nombre.trim() }]);
+    setClientes((prev) => [...prev, { id: result.clienteId!, nombre: nombre.trim(), colegio: { nombre: colegioNombre } }]);
     setClienteId(newId);
     setShowNewCliente(false);
+    setNewClienteColegioId("");
     clienteFormRef.current?.reset();
     toast.success("Cliente creado");
   }
@@ -131,6 +138,17 @@ export default function PedidoCreateForm({
             <div className="flex flex-col gap-2">
               <Label htmlFor="nc-nombre">Nombre</Label>
               <Input id="nc-nombre" name="nombre" placeholder="Ej: María González" required />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label>Colegio</Label>
+              <SearchSelect
+                value={newClienteColegioId}
+                onValueChange={setNewClienteColegioId}
+                placeholder="Buscar colegio..."
+                items={colegioItems}
+                name="colegioId"
+                required
+              />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="nc-telefono">Teléfono</Label>

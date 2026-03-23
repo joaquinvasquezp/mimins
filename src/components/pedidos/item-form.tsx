@@ -12,35 +12,33 @@ import { getPrecioByCombo } from "@/app/precios/actions";
 
 interface ItemFormProps {
   pedidoId: number;
+  colegioId: number;
   productos: { id: number; nombre: string }[];
-  colegios: { id: number; nombre: string }[];
   tallas: { id: number; nombre: string }[];
   onSuccess: () => void;
 }
 
 export default function ItemForm({
   pedidoId,
+  colegioId,
   productos,
-  colegios,
   tallas,
   onSuccess,
 }: ItemFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [productoId, setProductoId] = useState("");
-  const [colegioId, setColegioId] = useState("");
   const [tallaId, setTallaId] = useState("");
   const [fetchedPrecio, setFetchedPrecio] = useState<number | undefined>(undefined);
   const [precioKey, setPrecioKey] = useState(0);
 
   const productoItems = productos.map((p) => ({ value: String(p.id), label: p.nombre }));
-  const colegioItems = colegios.map((c) => ({ value: String(c.id), label: c.nombre }));
   const tallaItems = tallas.map((t) => ({ value: String(t.id), label: t.nombre }));
 
   useEffect(() => {
-    if (!productoId || !colegioId || !tallaId) return;
+    if (!productoId || !tallaId) return;
     getPrecioByCombo(
       parseInt(productoId, 10),
-      parseInt(colegioId, 10),
+      colegioId,
       parseInt(tallaId, 10)
     ).then((precio) => {
       setFetchedPrecio(precio ?? undefined);
@@ -50,6 +48,7 @@ export default function ItemForm({
 
   async function handleSubmit(formData: FormData) {
     formData.set("pedidoId", String(pedidoId));
+    formData.set("colegioId", String(colegioId));
     const result = await addItem(formData);
 
     if (result.error) {
@@ -60,7 +59,6 @@ export default function ItemForm({
     toast.success("Item agregado");
     formRef.current?.reset();
     setProductoId("");
-    setColegioId("");
     setTallaId("");
     setFetchedPrecio(undefined);
     setPrecioKey((k) => k + 1);
@@ -77,17 +75,6 @@ export default function ItemForm({
           placeholder="Buscar producto..."
           items={productoItems}
           name="productoId"
-          required
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label>Colegio</Label>
-        <SearchSelect
-          value={colegioId}
-          onValueChange={setColegioId}
-          placeholder="Buscar colegio..."
-          items={colegioItems}
-          name="colegioId"
           required
         />
       </div>

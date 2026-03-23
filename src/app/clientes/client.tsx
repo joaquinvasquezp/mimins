@@ -14,13 +14,20 @@ import ClienteForm from "@/components/clientes/cliente-form";
 
 interface Cliente {
   id: number;
+  colegioId: number;
   nombre: string;
   telefono: string;
   correo: string | null;
   notas: string | null;
+  colegio: { nombre: string };
 }
 
-export default function ClientesClient({ clientes }: { clientes: Cliente[] }) {
+interface Colegio {
+  id: number;
+  nombre: string;
+}
+
+export default function ClientesClient({ clientes, colegios }: { clientes: Cliente[]; colegios: Colegio[] }) {
   const [showCreate, setShowCreate] = useState(false);
 
   return (
@@ -32,14 +39,14 @@ export default function ClientesClient({ clientes }: { clientes: Cliente[] }) {
         </Button>
       </div>
 
-      <ClientesTable clientes={clientes} />
+      <ClientesTable clientes={clientes} colegios={colegios} />
 
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nuevo cliente</DialogTitle>
           </DialogHeader>
-          <ClienteForm onSuccess={() => setShowCreate(false)} />
+          <ClienteForm colegios={colegios} onSuccess={() => setShowCreate(false)} />
         </DialogContent>
       </Dialog>
     </div>

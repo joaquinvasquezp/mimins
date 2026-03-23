@@ -32,7 +32,6 @@ interface Item {
   precioUnitario: number;
   detalle: string | null;
   producto: { nombre: string };
-  colegio: { nombre: string };
   talla: { nombre: string };
 }
 
@@ -76,7 +75,6 @@ export default function PedidoItemsTable({ items }: { items: Item[] }) {
       <TableHeader>
         <TableRow>
           <TableHead>Producto</TableHead>
-          <TableHead>Colegio</TableHead>
           <TableHead>Talla</TableHead>
           <TableHead>Cant.</TableHead>
           <TableHead>P. Unit.</TableHead>
@@ -91,7 +89,6 @@ export default function PedidoItemsTable({ items }: { items: Item[] }) {
             <TableCell className="font-medium">
               {item.producto.nombre}
             </TableCell>
-            <TableCell>{item.colegio.nombre}</TableCell>
             <TableCell>{item.talla.nombre}</TableCell>
             <TableCell>{item.cantidad}</TableCell>
             <TableCell>
@@ -139,7 +136,7 @@ export default function PedidoItemsTable({ items }: { items: Item[] }) {
         {editingItem && (
           <form ref={formRef} action={handleEditSubmit} className="flex flex-col gap-4">
             <p className="text-sm text-muted-foreground">
-              {editingItem.producto.nombre} — {editingItem.colegio.nombre} — {editingItem.talla.nombre}
+              {editingItem.producto.nombre} — {editingItem.talla.nombre}
             </p>
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-2">

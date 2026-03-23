@@ -12,7 +12,7 @@ function parseLocalDate(iso: string): Date {
 export async function getPedidos() {
   return prisma.pedido.findMany({
     include: {
-      cliente: true,
+      cliente: { include: { colegio: true } },
       pagos: { select: { monto: true } },
       _count: { select: { items: true } },
     },
@@ -24,11 +24,10 @@ export async function getPedido(id: number) {
   return prisma.pedido.findUnique({
     where: { id },
     include: {
-      cliente: true,
+      cliente: { include: { colegio: true } },
       items: {
         include: {
           producto: true,
-          colegio: true,
           talla: true,
         },
       },

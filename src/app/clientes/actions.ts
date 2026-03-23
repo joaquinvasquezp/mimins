@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 
 export async function getClientes() {
   return prisma.cliente.findMany({
+    include: { colegio: { select: { nombre: true } } },
     orderBy: { nombre: "asc" },
   });
 }
@@ -13,6 +14,7 @@ export async function getCliente(id: number) {
   return prisma.cliente.findUnique({
     where: { id },
     include: {
+      colegio: true,
       pedidos: {
         include: {
           pagos: { select: { monto: true } },
@@ -26,12 +28,17 @@ export async function getCliente(id: number) {
 
 export async function createCliente(formData: FormData) {
   const nombre = formData.get("nombre") as string;
+  const colegioId = parseInt(formData.get("colegioId") as string, 10);
   const telefono = formData.get("telefono") as string;
   const correo = formData.get("correo") as string;
   const notas = formData.get("notas") as string;
 
   if (!nombre || nombre.trim() === "") {
     return { error: "El nombre es requerido" };
+  }
+
+  if (isNaN(colegioId)) {
+    return { error: "El colegio es requerido" };
   }
 
   if (!telefono || !/^\+56\d{9}$/.test(telefono)) {
@@ -42,6 +49,7 @@ export async function createCliente(formData: FormData) {
     const cliente = await prisma.cliente.create({
       data: {
         nombre: nombre.trim(),
+        colegioId,
         telefono,
         correo: correo?.trim() || null,
         notas: notas?.trim() || null,
@@ -57,12 +65,17 @@ export async function createCliente(formData: FormData) {
 
 export async function updateCliente(id: number, formData: FormData) {
   const nombre = formData.get("nombre") as string;
+  const colegioId = parseInt(formData.get("colegioId") as string, 10);
   const telefono = formData.get("telefono") as string;
   const correo = formData.get("correo") as string;
   const notas = formData.get("notas") as string;
 
   if (!nombre || nombre.trim() === "") {
     return { error: "El nombre es requerido" };
+  }
+
+  if (isNaN(colegioId)) {
+    return { error: "El colegio es requerido" };
   }
 
   if (!telefono || !/^\+56\d{9}$/.test(telefono)) {
@@ -74,6 +87,7 @@ export async function updateCliente(id: number, formData: FormData) {
       where: { id },
       data: {
         nombre: nombre.trim(),
+        colegioId,
         telefono,
         correo: correo?.trim() || null,
         notas: notas?.trim() || null,

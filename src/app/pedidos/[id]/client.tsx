@@ -3,9 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { formatMonto, formatFecha, formatTelefono } from "@/lib/utils";
-import { ESTADOS_PEDIDO, ESTADO_COLORS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import EstadoBadge from "@/components/pedidos/estado-badge";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +25,6 @@ interface Item {
   precioUnitario: number;
   detalle: string | null;
   producto: { nombre: string };
-  colegio: { nombre: string };
   talla: { nombre: string };
 }
 
@@ -46,17 +44,12 @@ interface Pedido {
   fechaEntregaReal: Date | null;
   total: number;
   notas: string | null;
-  cliente: { nombre: string; telefono: string };
+  cliente: { nombre: string; telefono: string; colegio: { nombre: string }; colegioId: number };
   items: Item[];
   pagos: Pago[];
 }
 
 interface Producto {
-  id: number;
-  nombre: string;
-}
-
-interface Colegio {
   id: number;
   nombre: string;
 }
@@ -70,12 +63,10 @@ interface Talla {
 export default function PedidoDetailClient({
   pedido,
   productos,
-  colegios,
   tallas,
 }: {
   pedido: Pedido;
   productos: Producto[];
-  colegios: Colegio[];
   tallas: Talla[];
 }) {
   const [showAddItem, setShowAddItem] = useState(false);
@@ -94,12 +85,7 @@ export default function PedidoDetailClient({
           <ArrowLeft />
         </Link>
         <h1 className="text-3xl font-bold">Pedido #{pedido.id}</h1>
-        <Badge
-          variant="outline"
-          className={ESTADO_COLORS[pedido.estado] ?? ""}
-        >
-          {ESTADOS_PEDIDO[pedido.estado] ?? pedido.estado}
-        </Badge>
+        <EstadoBadge pedidoId={pedido.id} estado={pedido.estado} />
       </div>
 
       {/* Información del pedido */}
@@ -114,6 +100,10 @@ export default function PedidoDetailClient({
           <div className="flex flex-col">
             <span className="text-muted-foreground text-sm">Cliente</span>
             <span>{pedido.cliente.nombre}</span>
+          </div>
+          <div className="flex flex-col">
+            <span className="text-muted-foreground text-sm">Colegio</span>
+            <span>{pedido.cliente.colegio.nombre}</span>
           </div>
           <div className="flex flex-col">
             <span className="text-muted-foreground text-sm">Teléfono</span>
@@ -192,8 +182,8 @@ export default function PedidoDetailClient({
           </DialogHeader>
           <ItemForm
             pedidoId={pedido.id}
+            colegioId={pedido.cliente.colegioId}
             productos={productos}
-            colegios={colegios}
             tallas={tallas}
             onSuccess={() => setShowAddItem(false)}
           />

@@ -9,6 +9,26 @@ export async function getColegios() {
   });
 }
 
+export async function getColegio(id: number) {
+  return prisma.colegio.findUnique({
+    where: { id },
+    include: {
+      clientes: {
+        include: {
+          pedidos: {
+            include: {
+              pagos: { select: { monto: true } },
+              _count: { select: { items: true } },
+            },
+            orderBy: { fechaPedido: "desc" },
+          },
+        },
+        orderBy: { nombre: "asc" },
+      },
+    },
+  });
+}
+
 export async function createColegio(formData: FormData) {
   const nombre = formData.get("nombre") as string;
   const notas = formData.get("notas") as string;

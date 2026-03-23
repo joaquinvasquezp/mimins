@@ -64,7 +64,7 @@ export default function PreciosClient({
         </Button>
       </div>
 
-      <PreciosTable precios={precios} />
+      <PreciosTable precios={precios} colegios={colegios} tallas={tallas} />
 
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent>

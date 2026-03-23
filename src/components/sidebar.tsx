@@ -17,10 +17,12 @@ import {
   ChevronRight,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
+import { logout } from "@/app/login/logout-action";
 
 const mainNav = [
   { href: "/", label: "Inicio", icon: LayoutDashboard },
@@ -51,6 +53,8 @@ export default function Sidebar() {
   };
 
   const catalogActive = catalogNav.some((item) => pathname.startsWith(item.href));
+
+  if (pathname === "/login") return null;
 
   return (
     <>
@@ -167,7 +171,7 @@ export default function Sidebar() {
           )}
         </nav>
 
-        <div className="px-3 py-3 border-t">
+        <div className="px-3 py-3 border-t space-y-1">
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
@@ -178,6 +182,15 @@ export default function Sidebar() {
             <span className="dark:hidden">Modo oscuro</span>
             <span className="hidden dark:block">Modo claro</span>
           </button>
+          <form action={logout}>
+            <button
+              type="submit"
+              className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
+            >
+              <LogOut className="size-4" />
+              Cerrar sesión
+            </button>
+          </form>
         </div>
       </aside>
     </>

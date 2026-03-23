@@ -36,15 +36,15 @@ export default async function HomePage() {
 
       {/* Cards de métricas */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-lg border bg-blue-50 p-5 flex flex-col gap-1">
+        <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/40 p-5 flex flex-col gap-1">
           <span className="text-muted-foreground text-sm">Pedidos activos</span>
           <span className="text-3xl font-bold">{activos.length}</span>
         </div>
-        <div className="rounded-lg border bg-amber-50 p-5 flex flex-col gap-1">
+        <div className="rounded-lg border bg-amber-50 dark:bg-amber-950/40 p-5 flex flex-col gap-1">
           <span className="text-muted-foreground text-sm">Por cobrar</span>
           <span className="text-3xl font-bold">{formatMonto(totalPendiente)}</span>
         </div>
-        <div className="rounded-lg border bg-zinc-100/60 p-5 flex flex-col gap-1">
+        <div className="rounded-lg border bg-zinc-100/60 dark:bg-zinc-800/40 p-5 flex flex-col gap-1">
           <span className="text-muted-foreground text-sm">Total pedidos</span>
           <span className="text-3xl font-bold">{pedidos.length}</span>
         </div>
@@ -100,7 +100,7 @@ export default async function HomePage() {
                       #{pedido.id} — {pedido.cliente.nombre}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {ESTADOS_PEDIDO[pedido.estado] ?? pedido.estado} · {pedido._count.items} items · {formatMonto(pedido.total)}
+                      {new Date(pedido.fechaPedido).toLocaleDateString("es-MX", { day: "numeric", month: "short" })} · {ESTADOS_PEDIDO[pedido.estado] ?? pedido.estado} · {pedido._count.items} items · {formatMonto(pedido.total)}
                     </div>
                   </div>
                   {pendiente > 0 && (

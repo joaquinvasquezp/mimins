@@ -100,7 +100,7 @@ export default async function HomePage() {
                       #{pedido.id} — {pedido.cliente.nombre}
                     </div>
                     <div className="text-sm text-muted-foreground">
-                      {new Date(pedido.fechaPedido).toLocaleDateString("es-MX", { day: "numeric", month: "short" })} · {ESTADOS_PEDIDO[pedido.estado] ?? pedido.estado} · {pedido._count.items} items · {formatMonto(pedido.total)}
+                      {pedido.cliente.colegio.nombre} · {new Date(pedido.fechaPedido).toLocaleDateString("es-MX", { day: "numeric", month: "short" })} · {ESTADOS_PEDIDO[pedido.estado] ?? pedido.estado} · {pedido._count.items} items · Total: {formatMonto(pedido.total)}
                     </div>
                   </div>
                   {pendiente > 0 && (

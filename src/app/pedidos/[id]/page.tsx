@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPedido } from "../actions";
 import { getProductos } from "@/app/productos/actions";
-import { getColegios } from "@/app/colegios/actions";
 import { getTallas } from "@/app/tallas/actions";
 import PedidoDetailClient from "./client";
 
@@ -17,10 +16,9 @@ export default async function PedidoDetailPage({
 
   if (isNaN(pedidoId)) notFound();
 
-  const [pedido, productos, colegios, tallas] = await Promise.all([
+  const [pedido, productos, tallas] = await Promise.all([
     getPedido(pedidoId),
     getProductos(),
-    getColegios(),
     getTallas(),
   ]);
 
@@ -30,7 +28,6 @@ export default async function PedidoDetailPage({
     <PedidoDetailClient
       pedido={pedido}
       productos={productos}
-      colegios={colegios}
       tallas={tallas}
     />
   );

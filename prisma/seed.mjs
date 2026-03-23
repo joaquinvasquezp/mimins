@@ -104,18 +104,19 @@ const nombres = [
   "Diana Yáñez", "Rocío Zamora",
 ];
 const insertCliente = db.prepare(
-  "INSERT INTO clientes (nombre, telefono, correo, notas, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)"
+  "INSERT INTO clientes (colegio_id, nombre, telefono, correo, notas, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)"
 );
 const clientes = [];
 for (let i = 0; i < nombres.length; i++) {
+  const colegio = pick(colegios);
   const tel = `+569${String(randomInt(10000000, 99999999))}`;
   const correo =
     i % 3 === 0
       ? `${nombres[i].split(" ")[0].toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}@correo.cl`
       : null;
   const notas = i % 5 === 0 ? "Cliente frecuente" : null;
-  const info = insertCliente.run(nombres[i], tel, correo, notas, now(), now());
-  clientes.push({ id: Number(info.lastInsertRowid), nombre: nombres[i] });
+  const info = insertCliente.run(colegio.id, nombres[i], tel, correo, notas, now(), now());
+  clientes.push({ id: Number(info.lastInsertRowid), nombre: nombres[i], colegioId: colegio.id });
 }
 console.log(`  ${clientes.length} clientes creados`);
 
@@ -212,7 +213,7 @@ const numPedidos = 80;
 
 for (let i = 0; i < numPedidos; i++) {
   const cliente = pick(clientes);
-  const colegio = pick(colegios);
+  const colegioId = cliente.colegioId;
   const estado = pick(estados);
 
   // Fechas realistas
@@ -274,7 +275,7 @@ for (let i = 0; i < numPedidos; i++) {
 
     // Buscar precio en tabla o usar base
     const precioRow = preciosCreados.find(
-      (p) => p.productoId === prod.id && p.colegioId === colegio.id && p.tallaId === talla.id
+      (p) => p.productoId === prod.id && p.colegioId === colegioId && p.tallaId === talla.id
     );
     const precioUnit = precioRow ? precioRow.precio : basePrices[prod.nombre] || 10000;
     const detalle = pick([null, null, null, "Sin logo", "Tela reforzada", "Bordado especial"]);
@@ -282,7 +283,7 @@ for (let i = 0; i < numPedidos; i++) {
     insertItem.run(
       pedidoId,
       prod.id,
-      colegio.id,
+      colegioId,
       talla.id,
       cantidad,
       precioUnit,

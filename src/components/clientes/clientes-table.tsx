@@ -21,7 +21,7 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import { deleteCliente } from "@/app/clientes/actions";
-import { formatTelefono } from "@/lib/utils";
+import { cn, formatTelefono } from "@/lib/utils";
 import ClienteForm from "./cliente-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
@@ -29,18 +29,32 @@ import { TableSearch, TablePagination, TableEmpty, SortableHead } from "@/compon
 
 interface Cliente {
   id: number;
+  colegioId: number;
   nombre: string;
   telefono: string;
   correo: string | null;
   notas: string | null;
+  colegio: { nombre: string };
 }
 
-export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
+interface Colegio {
+  id: number;
+  nombre: string;
+}
+
+export default function ClientesTable({ clientes, colegios }: { clientes: Cliente[]; colegios: Colegio[] }) {
   const [editingCliente, setEditingCliente] = useState<Cliente | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Cliente | null>(null);
+  const [colegioFilter, setColegioFilter] = useState<number | null>(null);
+
+  const clientesFiltrados = colegioFilter
+    ? clientes.filter((c) => c.colegioId === colegioFilter)
+    : clientes;
+
   const { search, setSearch, page, setPage, totalPages, paged, totalFiltered, totalItems, sort, toggleSort } =
-    useTableSearch(clientes, (c, q) =>
+    useTableSearch(clientesFiltrados, (c, q) =>
       c.nombre.toLowerCase().includes(q) ||
+      c.colegio.nombre.toLowerCase().includes(q) ||
       c.telefono.includes(q) ||
       (c.correo ?? "").toLowerCase().includes(q)
     );
@@ -65,11 +79,42 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
 
   return (
     <>
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground shrink-0 w-14">Colegio</span>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setColegioFilter(null)}
+            className={cn(
+              "rounded-full border px-3 py-1 text-sm transition-colors",
+              colegioFilter === null
+                ? "bg-foreground text-background border-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Todos
+          </button>
+          {colegios.map((col) => (
+            <button
+              key={col.id}
+              onClick={() => setColegioFilter(colegioFilter === col.id ? null : col.id)}
+              className={cn(
+                "rounded-full border px-3 py-1 text-sm transition-colors",
+                colegioFilter === col.id
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {col.nombre}
+            </button>
+          ))}
+        </div>
+      </div>
       <TableSearch value={search} onChange={setSearch} placeholder="Buscar por nombre, teléfono, correo..." />
       <div className="overflow-x-auto"><Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Nombre" sortKey="nombre" sort={sort} onToggle={toggleSort} />
+            <SortableHead label="Colegio" sortKey="colegio.nombre" sort={sort} onToggle={toggleSort} />
             <TableHead>Teléfono</TableHead>
             <TableHead>Correo</TableHead>
             <TableHead>Notas</TableHead>
@@ -80,6 +125,7 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
           {paged.map((cliente) => (
             <TableRow key={cliente.id}>
               <TableCell className="font-medium">{cliente.nombre}</TableCell>
+              <TableCell>{cliente.colegio.nombre}</TableCell>
               <TableCell>{formatTelefono(cliente.telefono)}</TableCell>
               <TableCell className="text-muted-foreground">
                 {cliente.correo || "—"}
@@ -138,6 +184,7 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
           {editingCliente && (
             <ClienteForm
               cliente={editingCliente}
+              colegios={colegios}
               onSuccess={() => setEditingCliente(null)}
             />
           )}

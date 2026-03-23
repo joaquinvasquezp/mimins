@@ -16,7 +16,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import { deleteColegio } from "@/app/colegios/actions";
 import ColegioForm from "./colegio-form";
@@ -74,6 +76,13 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
+                  <Link
+                    href={`/colegios/${colegio.id}`}
+                    className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                    aria-label="Ver detalle"
+                  >
+                    <Eye />
+                  </Link>
                   <Button
                     variant="ghost"
                     size="icon-sm"

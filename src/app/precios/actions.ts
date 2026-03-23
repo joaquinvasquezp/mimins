@@ -26,6 +26,13 @@ export async function getPrecioByCombo(productoId: number, colegioId: number, ta
   return precio?.precioVenta ?? null;
 }
 
+export async function getHistorialPrecio(precioProductoId: number) {
+  return prisma.historialPrecio.findMany({
+    where: { precioProductoId },
+    orderBy: { fechaCambio: "desc" },
+  });
+}
+
 export async function createPrecio(formData: FormData) {
   const productoId = parseInt(formData.get("productoId") as string, 10);
   const colegioId = parseInt(formData.get("colegioId") as string, 10);

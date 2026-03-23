@@ -43,10 +43,8 @@ export default function ItemForm({
       parseInt(colegioId, 10),
       parseInt(tallaId, 10)
     ).then((precio) => {
-      if (precio !== null) {
-        setFetchedPrecio(precio);
-        setPrecioKey((k) => k + 1);
-      }
+      setFetchedPrecio(precio ?? undefined);
+      setPrecioKey((k) => k + 1);
     });
   }, [productoId, colegioId, tallaId]);
 

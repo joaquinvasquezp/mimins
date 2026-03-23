@@ -9,35 +9,35 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import ColegiosTable from "@/components/colegios/colegios-table";
-import ColegioForm from "@/components/colegios/colegio-form";
+import TallasTable from "@/components/tallas/tallas-table";
+import TallaForm from "@/components/tallas/talla-form";
 
-interface Colegio {
+interface Talla {
   id: number;
   nombre: string;
-  notas: string | null;
+  orden: number;
 }
 
-export default function ColegiosClient({ colegios }: { colegios: Colegio[] }) {
+export default function TallasClient({ tallas }: { tallas: Talla[] }) {
   const [showCreate, setShowCreate] = useState(false);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Colegios</h1>
+        <h1 className="text-3xl font-bold">Tallas</h1>
         <Button onClick={() => setShowCreate(true)}>
-          <Plus /> Nuevo colegio
+          <Plus /> Nueva talla
         </Button>
       </div>
 
-      <ColegiosTable colegios={colegios} />
+      <TallasTable tallas={tallas} />
 
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nuevo colegio</DialogTitle>
+            <DialogTitle>Nueva talla</DialogTitle>
           </DialogHeader>
-          <ColegioForm onSuccess={() => setShowCreate(false)} />
+          <TallaForm onSuccess={() => setShowCreate(false)} />
         </DialogContent>
       </Dialog>
     </div>

@@ -9,35 +9,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
-import ColegiosTable from "@/components/colegios/colegios-table";
-import ColegioForm from "@/components/colegios/colegio-form";
+import ClientesTable from "@/components/clientes/clientes-table";
+import ClienteForm from "@/components/clientes/cliente-form";
 
-interface Colegio {
+interface Cliente {
   id: number;
   nombre: string;
+  telefono: string;
+  correo: string | null;
   notas: string | null;
 }
 
-export default function ColegiosClient({ colegios }: { colegios: Colegio[] }) {
+export default function ClientesClient({ clientes }: { clientes: Cliente[] }) {
   const [showCreate, setShowCreate] = useState(false);
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Colegios</h1>
+        <h1 className="text-3xl font-bold">Clientes</h1>
         <Button onClick={() => setShowCreate(true)}>
-          <Plus /> Nuevo colegio
+          <Plus /> Nuevo cliente
         </Button>
       </div>
 
-      <ColegiosTable colegios={colegios} />
+      <ClientesTable clientes={clientes} />
 
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nuevo colegio</DialogTitle>
+            <DialogTitle>Nuevo cliente</DialogTitle>
           </DialogHeader>
-          <ColegioForm onSuccess={() => setShowCreate(false)} />
+          <ClienteForm onSuccess={() => setShowCreate(false)} />
         </DialogContent>
       </Dialog>
     </div>

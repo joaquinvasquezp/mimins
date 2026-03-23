@@ -18,73 +18,76 @@ import {
 } from "@/components/ui/dialog";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { deleteColegio } from "@/app/colegios/actions";
-import ColegioForm from "./colegio-form";
+import { deleteProducto } from "@/app/productos/actions";
+import ProductoForm from "./producto-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
 import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
 
-interface Colegio {
+interface Producto {
   id: number;
   nombre: string;
-  notas: string | null;
+  categoria: string | null;
 }
 
-export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
-  const [editingColegio, setEditingColegio] = useState<Colegio | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<Colegio | null>(null);
+export default function ProductosTable({ productos }: { productos: Producto[] }) {
+  const [editingProducto, setEditingProducto] = useState<Producto | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Producto | null>(null);
   const { search, setSearch, page, setPage, totalPages, paged, totalFiltered, totalItems, sort, toggleSort } =
-    useTableSearch(colegios, (c, q) => c.nombre.toLowerCase().includes(q));
+    useTableSearch(productos, (p, q) =>
+      p.nombre.toLowerCase().includes(q) ||
+      (p.categoria ?? "").toLowerCase().includes(q)
+    );
 
   async function handleConfirmDelete() {
     if (!deleteTarget) return;
-    const result = await deleteColegio(deleteTarget.id);
+    const result = await deleteProducto(deleteTarget.id);
     if (result.error) {
       toast.error(result.error);
       return;
     }
-    toast.success("Colegio eliminado");
+    toast.success("Producto eliminado");
   }
 
-  if (colegios.length === 0) {
+  if (productos.length === 0) {
     return (
       <p className="text-muted-foreground text-base">
-        No hay colegios registrados. Crea el primero.
+        No hay productos registrados. Crea el primero.
       </p>
     );
   }
 
   return (
     <>
-      <TableSearch value={search} onChange={setSearch} placeholder="Buscar colegio..." />
+      <TableSearch value={search} onChange={setSearch} placeholder="Buscar por nombre, categoría..." />
       <Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Nombre" sortKey="nombre" sort={sort} onToggle={toggleSort} />
-            <TableHead>Notas</TableHead>
+            <SortableHead label="Categoría" sortKey="categoria" sort={sort} onToggle={toggleSort} />
             <TableHead className="w-24">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paged.map((colegio) => (
-            <TableRow key={colegio.id}>
-              <TableCell className="font-medium">{colegio.nombre}</TableCell>
+          {paged.map((producto) => (
+            <TableRow key={producto.id}>
+              <TableCell className="font-medium">{producto.nombre}</TableCell>
               <TableCell className="text-muted-foreground">
-                {colegio.notas || "—"}
+                {producto.categoria || "—"}
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    onClick={() => setEditingColegio(colegio)}
+                    onClick={() => setEditingProducto(producto)}
                   >
                     <Pencil />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    onClick={() => setDeleteTarget(colegio)}
+                    onClick={() => setDeleteTarget(producto)}
                   >
                     <Trash2 />
                   </Button>
@@ -97,17 +100,17 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 
       <Dialog
-        open={editingColegio !== null}
-        onOpenChange={(open) => !open && setEditingColegio(null)}
+        open={editingProducto !== null}
+        onOpenChange={(open) => !open && setEditingProducto(null)}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar colegio</DialogTitle>
+            <DialogTitle>Editar producto</DialogTitle>
           </DialogHeader>
-          {editingColegio && (
-            <ColegioForm
-              colegio={editingColegio}
-              onSuccess={() => setEditingColegio(null)}
+          {editingProducto && (
+            <ProductoForm
+              producto={editingProducto}
+              onSuccess={() => setEditingProducto(null)}
             />
           )}
         </DialogContent>
@@ -116,7 +119,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
       <ConfirmDialog
         open={deleteTarget !== null}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Eliminar colegio"
+        title="Eliminar producto"
         description={`¿Estás seguro de eliminar "${deleteTarget?.nombre}"? Esta acción no se puede deshacer.`}
         onConfirm={handleConfirmDelete}
       />

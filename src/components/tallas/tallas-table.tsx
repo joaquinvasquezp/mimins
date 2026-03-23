@@ -18,73 +18,71 @@ import {
 } from "@/components/ui/dialog";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { deleteColegio } from "@/app/colegios/actions";
-import ColegioForm from "./colegio-form";
+import { deleteTalla } from "@/app/tallas/actions";
+import TallaForm from "./talla-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
 import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
 
-interface Colegio {
+interface Talla {
   id: number;
   nombre: string;
-  notas: string | null;
+  orden: number;
 }
 
-export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
-  const [editingColegio, setEditingColegio] = useState<Colegio | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<Colegio | null>(null);
+export default function TallasTable({ tallas }: { tallas: Talla[] }) {
+  const [editingTalla, setEditingTalla] = useState<Talla | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Talla | null>(null);
   const { search, setSearch, page, setPage, totalPages, paged, totalFiltered, totalItems, sort, toggleSort } =
-    useTableSearch(colegios, (c, q) => c.nombre.toLowerCase().includes(q));
+    useTableSearch(tallas, (t, q) => t.nombre.toLowerCase().includes(q));
 
   async function handleConfirmDelete() {
     if (!deleteTarget) return;
-    const result = await deleteColegio(deleteTarget.id);
+    const result = await deleteTalla(deleteTarget.id);
     if (result.error) {
       toast.error(result.error);
       return;
     }
-    toast.success("Colegio eliminado");
+    toast.success("Talla eliminada");
   }
 
-  if (colegios.length === 0) {
+  if (tallas.length === 0) {
     return (
       <p className="text-muted-foreground text-base">
-        No hay colegios registrados. Crea el primero.
+        No hay tallas registradas. Crea la primera.
       </p>
     );
   }
 
   return (
     <>
-      <TableSearch value={search} onChange={setSearch} placeholder="Buscar colegio..." />
+      <TableSearch value={search} onChange={setSearch} placeholder="Buscar talla..." />
       <Table>
         <TableHeader>
           <TableRow>
+            <SortableHead label="Orden" sortKey="orden" sort={sort} onToggle={toggleSort} />
             <SortableHead label="Nombre" sortKey="nombre" sort={sort} onToggle={toggleSort} />
-            <TableHead>Notas</TableHead>
             <TableHead className="w-24">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paged.map((colegio) => (
-            <TableRow key={colegio.id}>
-              <TableCell className="font-medium">{colegio.nombre}</TableCell>
-              <TableCell className="text-muted-foreground">
-                {colegio.notas || "—"}
-              </TableCell>
+          {paged.map((talla) => (
+            <TableRow key={talla.id}>
+              <TableCell>{talla.orden}</TableCell>
+              <TableCell className="font-medium">{talla.nombre}</TableCell>
               <TableCell>
                 <div className="flex gap-1">
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    onClick={() => setEditingColegio(colegio)}
+                    onClick={() => setEditingTalla(talla)}
                   >
                     <Pencil />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    onClick={() => setDeleteTarget(colegio)}
+                    onClick={() => setDeleteTarget(talla)}
                   >
                     <Trash2 />
                   </Button>
@@ -97,17 +95,17 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 
       <Dialog
-        open={editingColegio !== null}
-        onOpenChange={(open) => !open && setEditingColegio(null)}
+        open={editingTalla !== null}
+        onOpenChange={(open) => !open && setEditingTalla(null)}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar colegio</DialogTitle>
+            <DialogTitle>Editar talla</DialogTitle>
           </DialogHeader>
-          {editingColegio && (
-            <ColegioForm
-              colegio={editingColegio}
-              onSuccess={() => setEditingColegio(null)}
+          {editingTalla && (
+            <TallaForm
+              talla={editingTalla}
+              onSuccess={() => setEditingTalla(null)}
             />
           )}
         </DialogContent>
@@ -116,7 +114,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
       <ConfirmDialog
         open={deleteTarget !== null}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Eliminar colegio"
+        title="Eliminar talla"
         description={`¿Estás seguro de eliminar "${deleteTarget?.nombre}"? Esta acción no se puede deshacer.`}
         onConfirm={handleConfirmDelete}
       />

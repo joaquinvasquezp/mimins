@@ -16,75 +16,95 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Pencil, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
-import { deleteColegio } from "@/app/colegios/actions";
-import ColegioForm from "./colegio-form";
+import { deleteCliente } from "@/app/clientes/actions";
+import ClienteForm from "./cliente-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
 import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
 
-interface Colegio {
+interface Cliente {
   id: number;
   nombre: string;
+  telefono: string;
+  correo: string | null;
   notas: string | null;
 }
 
-export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
-  const [editingColegio, setEditingColegio] = useState<Colegio | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<Colegio | null>(null);
+export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
+  const [editingCliente, setEditingCliente] = useState<Cliente | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Cliente | null>(null);
   const { search, setSearch, page, setPage, totalPages, paged, totalFiltered, totalItems, sort, toggleSort } =
-    useTableSearch(colegios, (c, q) => c.nombre.toLowerCase().includes(q));
+    useTableSearch(clientes, (c, q) =>
+      c.nombre.toLowerCase().includes(q) ||
+      c.telefono.includes(q) ||
+      (c.correo ?? "").toLowerCase().includes(q)
+    );
 
   async function handleConfirmDelete() {
     if (!deleteTarget) return;
-    const result = await deleteColegio(deleteTarget.id);
+    const result = await deleteCliente(deleteTarget.id);
     if (result.error) {
       toast.error(result.error);
       return;
     }
-    toast.success("Colegio eliminado");
+    toast.success("Cliente eliminado");
   }
 
-  if (colegios.length === 0) {
+  if (clientes.length === 0) {
     return (
       <p className="text-muted-foreground text-base">
-        No hay colegios registrados. Crea el primero.
+        No hay clientes registrados. Crea el primero.
       </p>
     );
   }
 
   return (
     <>
-      <TableSearch value={search} onChange={setSearch} placeholder="Buscar colegio..." />
+      <TableSearch value={search} onChange={setSearch} placeholder="Buscar por nombre, teléfono, correo..." />
       <Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Nombre" sortKey="nombre" sort={sort} onToggle={toggleSort} />
+            <TableHead>Teléfono</TableHead>
+            <TableHead>Correo</TableHead>
             <TableHead>Notas</TableHead>
             <TableHead className="w-24">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paged.map((colegio) => (
-            <TableRow key={colegio.id}>
-              <TableCell className="font-medium">{colegio.nombre}</TableCell>
+          {paged.map((cliente) => (
+            <TableRow key={cliente.id}>
+              <TableCell className="font-medium">{cliente.nombre}</TableCell>
+              <TableCell>{cliente.telefono}</TableCell>
               <TableCell className="text-muted-foreground">
-                {colegio.notas || "—"}
+                {cliente.correo || "—"}
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {cliente.notas || "—"}
               </TableCell>
               <TableCell>
                 <div className="flex gap-1">
+                  <Link
+                    href={`/clientes/${cliente.id}`}
+                    className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                  >
+                    <Eye />
+                  </Link>
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    onClick={() => setEditingColegio(colegio)}
+                    onClick={() => setEditingCliente(cliente)}
                   >
                     <Pencil />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    onClick={() => setDeleteTarget(colegio)}
+                    onClick={() => setDeleteTarget(cliente)}
                   >
                     <Trash2 />
                   </Button>
@@ -94,20 +114,26 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
           ))}
         </TableBody>
       </Table>
-      <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
+      <TablePagination
+        page={page}
+        totalPages={totalPages}
+        totalFiltered={totalFiltered}
+        totalItems={totalItems}
+        onPageChange={setPage}
+      />
 
       <Dialog
-        open={editingColegio !== null}
-        onOpenChange={(open) => !open && setEditingColegio(null)}
+        open={editingCliente !== null}
+        onOpenChange={(open) => !open && setEditingCliente(null)}
       >
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Editar colegio</DialogTitle>
+            <DialogTitle>Editar cliente</DialogTitle>
           </DialogHeader>
-          {editingColegio && (
-            <ColegioForm
-              colegio={editingColegio}
-              onSuccess={() => setEditingColegio(null)}
+          {editingCliente && (
+            <ClienteForm
+              cliente={editingCliente}
+              onSuccess={() => setEditingCliente(null)}
             />
           )}
         </DialogContent>
@@ -116,7 +142,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
       <ConfirmDialog
         open={deleteTarget !== null}
         onOpenChange={(open) => !open && setDeleteTarget(null)}
-        title="Eliminar colegio"
+        title="Eliminar cliente"
         description={`¿Estás seguro de eliminar "${deleteTarget?.nombre}"? Esta acción no se puede deshacer.`}
         onConfirm={handleConfirmDelete}
       />

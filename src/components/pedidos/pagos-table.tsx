@@ -46,11 +46,9 @@ export default function PagosTable({ pagos }: { pagos: Pago[] }) {
     );
   }
 
-  const totalPagado = pagos.reduce((sum, p) => sum + p.monto, 0);
-
   return (
-    <div className="flex flex-col gap-2">
-      <Table>
+    <>
+      <div className="overflow-x-auto"><Table>
         <TableHeader>
           <TableRow>
             <TableHead>Fecha</TableHead>
@@ -88,10 +86,7 @@ export default function PagosTable({ pagos }: { pagos: Pago[] }) {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
-      <p className="text-base font-medium">
-        Total pagado: {formatMonto(totalPagado)}
-      </p>
+      </Table></div>
 
       <ConfirmDialog
         open={deleteId !== null}
@@ -100,6 +95,6 @@ export default function PagosTable({ pagos }: { pagos: Pago[] }) {
         description="¿Estás seguro de eliminar este pago? Esta acción no se puede deshacer."
         onConfirm={handleConfirmDelete}
       />
-    </div>
+    </>
   );
 }

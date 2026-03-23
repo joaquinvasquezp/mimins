@@ -130,7 +130,7 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
             Este cliente no tiene pedidos.
           </p>
         ) : (
-          <Table>
+          <div className="overflow-x-auto"><Table>
             <TableHeader>
               <TableRow>
                 <TableHead>#</TableHead>
@@ -185,7 +185,7 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
                 );
               })}
             </TableBody>
-          </Table>
+          </Table></div>
         )}
       </section>
     </div>

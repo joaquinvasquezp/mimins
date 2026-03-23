@@ -60,7 +60,7 @@ export default function ProductosTable({ productos }: { productos: Producto[] })
   return (
     <>
       <TableSearch value={search} onChange={setSearch} placeholder="Buscar por nombre, categoría..." />
-      <Table>
+      <div className="overflow-x-auto"><Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Nombre" sortKey="nombre" sort={sort} onToggle={toggleSort} />
@@ -98,7 +98,7 @@ export default function ProductosTable({ productos }: { productos: Producto[] })
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table></div>
       {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 

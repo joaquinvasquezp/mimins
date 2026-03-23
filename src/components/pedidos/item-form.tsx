@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import MontoInput from "@/components/ui/monto-input";
@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import SearchSelect from "@/components/ui/combobox";
 import { toast } from "sonner";
 import { addItem } from "@/app/pedidos/actions";
+import { getPrecioByCombo } from "@/app/precios/actions";
 
 interface ItemFormProps {
   pedidoId: number;
@@ -25,9 +26,29 @@ export default function ItemForm({
   onSuccess,
 }: ItemFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
+  const [productoId, setProductoId] = useState("");
+  const [colegioId, setColegioId] = useState("");
+  const [tallaId, setTallaId] = useState("");
+  const [fetchedPrecio, setFetchedPrecio] = useState<number | undefined>(undefined);
+  const [precioKey, setPrecioKey] = useState(0);
+
   const productoItems = productos.map((p) => ({ value: String(p.id), label: p.nombre }));
   const colegioItems = colegios.map((c) => ({ value: String(c.id), label: c.nombre }));
   const tallaItems = tallas.map((t) => ({ value: String(t.id), label: t.nombre }));
+
+  useEffect(() => {
+    if (!productoId || !colegioId || !tallaId) return;
+    getPrecioByCombo(
+      parseInt(productoId, 10),
+      parseInt(colegioId, 10),
+      parseInt(tallaId, 10)
+    ).then((precio) => {
+      if (precio !== null) {
+        setFetchedPrecio(precio);
+        setPrecioKey((k) => k + 1);
+      }
+    });
+  }, [productoId, colegioId, tallaId]);
 
   async function handleSubmit(formData: FormData) {
     formData.set("pedidoId", String(pedidoId));
@@ -40,6 +61,11 @@ export default function ItemForm({
 
     toast.success("Item agregado");
     formRef.current?.reset();
+    setProductoId("");
+    setColegioId("");
+    setTallaId("");
+    setFetchedPrecio(undefined);
+    setPrecioKey((k) => k + 1);
     onSuccess();
   }
 
@@ -48,6 +74,8 @@ export default function ItemForm({
       <div className="flex flex-col gap-2">
         <Label>Producto</Label>
         <SearchSelect
+          value={productoId}
+          onValueChange={setProductoId}
           placeholder="Buscar producto..."
           items={productoItems}
           name="productoId"
@@ -57,6 +85,8 @@ export default function ItemForm({
       <div className="flex flex-col gap-2">
         <Label>Colegio</Label>
         <SearchSelect
+          value={colegioId}
+          onValueChange={setColegioId}
           placeholder="Buscar colegio..."
           items={colegioItems}
           name="colegioId"
@@ -66,6 +96,8 @@ export default function ItemForm({
       <div className="flex flex-col gap-2">
         <Label>Talla</Label>
         <SearchSelect
+          value={tallaId}
+          onValueChange={setTallaId}
           placeholder="Buscar talla..."
           items={tallaItems}
           name="tallaId"
@@ -87,9 +119,11 @@ export default function ItemForm({
         <div className="flex flex-col gap-2">
           <Label htmlFor="precioUnitario">Precio unitario</Label>
           <MontoInput
+            key={precioKey}
             id="precioUnitario"
             name="precioUnitario"
             placeholder="Ej: 15.000"
+            defaultValue={fetchedPrecio}
             required
           />
         </div>

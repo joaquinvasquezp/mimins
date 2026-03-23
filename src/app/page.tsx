@@ -51,6 +51,20 @@ export default async function HomePage() {
       </div>
 
       {/* Badges por estado + lista de activos */}
+      {activos.length === 0 && pedidos.length === 0 && (
+        <section className="rounded-lg border p-8 flex flex-col items-center gap-3 text-center">
+          <ClipboardList className="size-10 text-muted-foreground" />
+          <p className="text-muted-foreground text-base">
+            Aún no hay pedidos registrados.
+          </p>
+          <Link
+            href="/pedidos?nuevo=1"
+            className="text-sm font-medium text-primary hover:underline"
+          >
+            Crear el primer pedido
+          </Link>
+        </section>
+      )}
       {activos.length > 0 && (
         <section className="rounded-lg border p-5 flex flex-col gap-5">
           <div className="flex items-center justify-between">

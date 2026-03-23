@@ -57,7 +57,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
   return (
     <>
       <TableSearch value={search} onChange={setSearch} placeholder="Buscar colegio..." />
-      <Table>
+      <div className="overflow-x-auto"><Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Nombre" sortKey="nombre" sort={sort} onToggle={toggleSort} />
@@ -95,7 +95,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table></div>
       {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 

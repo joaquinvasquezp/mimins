@@ -57,7 +57,7 @@ export default function TallasTable({ tallas }: { tallas: Talla[] }) {
   return (
     <>
       <TableSearch value={search} onChange={setSearch} placeholder="Buscar talla..." />
-      <Table>
+      <div className="overflow-x-auto"><Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Orden" sortKey="orden" sort={sort} onToggle={toggleSort} />
@@ -93,7 +93,7 @@ export default function TallasTable({ tallas }: { tallas: Talla[] }) {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table></div>
       {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 

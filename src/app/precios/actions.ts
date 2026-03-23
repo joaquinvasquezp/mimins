@@ -18,6 +18,14 @@ export async function getPrecios() {
   });
 }
 
+export async function getPrecioByCombo(productoId: number, colegioId: number, tallaId: number) {
+  const precio = await prisma.precioProducto.findUnique({
+    where: { productoId_colegioId_tallaId: { productoId, colegioId, tallaId } },
+    select: { precioVenta: true },
+  });
+  return precio?.precioVenta ?? null;
+}
+
 export async function createPrecio(formData: FormData) {
   const productoId = parseInt(formData.get("productoId") as string, 10);
   const colegioId = parseInt(formData.get("colegioId") as string, 10);

@@ -13,12 +13,14 @@ import {
   DollarSign,
   Plus,
   LayoutDashboard,
-  Settings,
+  Boxes,
   ChevronRight,
   Menu,
   X,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { useTheme } from "next-themes";
+import { Sun, Moon } from "lucide-react";
 
 const mainNav = [
   { href: "/", label: "Inicio", icon: LayoutDashboard },
@@ -37,6 +39,7 @@ export default function Sidebar() {
   const pathname = usePathname();
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   useEffect(() => {
     setMobileOpen(false);
@@ -135,7 +138,7 @@ export default function Sidebar() {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <Settings className="size-4" />
+            <Boxes className="size-4" />
             Catálogos
             <ChevronRight className={cn(
               "ml-auto size-3.5 transition-transform",
@@ -163,6 +166,19 @@ export default function Sidebar() {
             </div>
           )}
         </nav>
+
+        <div className="px-3 py-3 border-t">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
+            aria-label="Cambiar tema"
+          >
+            <Sun className="size-4 dark:hidden" />
+            <Moon className="size-4 hidden dark:block" />
+            <span className="dark:hidden">Modo oscuro</span>
+            <span className="hidden dark:block">Modo claro</span>
+          </button>
+        </div>
       </aside>
     </>
   );

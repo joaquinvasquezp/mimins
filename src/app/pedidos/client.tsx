@@ -113,7 +113,7 @@ export default function PedidosClient({
               className={cn(
                 "rounded-full border px-3 py-1 text-sm transition-colors",
                 estadoFilter === key
-                  ? "bg-foreground text-background border-foreground"
+                  ? ESTADO_COLORS[key]
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -122,7 +122,7 @@ export default function PedidosClient({
           ))}
         </div>
         <TableSearch value={search} onChange={setSearch} placeholder="Buscar por cliente, #..." />
-        <Table>
+        <div className="overflow-x-auto"><Table>
           <TableHeader>
             <TableRow>
               <SortableHead label="#" sortKey="id" sort={sort} onToggle={toggleSort} />
@@ -188,7 +188,7 @@ export default function PedidosClient({
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+        </Table></div>
         {paged.length === 0 && <TableEmpty search={search} />}
         <TablePagination
           page={page}

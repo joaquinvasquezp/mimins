@@ -64,7 +64,7 @@ export default function PreciosTable({ precios }: { precios: Precio[] }) {
   return (
     <>
       <TableSearch value={search} onChange={setSearch} placeholder="Buscar por producto, colegio, talla..." />
-      <Table>
+      <div className="overflow-x-auto"><Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Producto" sortKey="producto.nombre" sort={sort} onToggle={toggleSort} />
@@ -111,7 +111,7 @@ export default function PreciosTable({ precios }: { precios: Precio[] }) {
             );
           })}
         </TableBody>
-      </Table>
+      </Table></div>
       {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 

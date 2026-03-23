@@ -66,7 +66,7 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
   return (
     <>
       <TableSearch value={search} onChange={setSearch} placeholder="Buscar por nombre, teléfono, correo..." />
-      <Table>
+      <div className="overflow-x-auto"><Table>
         <TableHeader>
           <TableRow>
             <SortableHead label="Nombre" sortKey="nombre" sort={sort} onToggle={toggleSort} />
@@ -117,7 +117,7 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
             </TableRow>
           ))}
         </TableBody>
-      </Table>
+      </Table></div>
       {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination
         page={page}

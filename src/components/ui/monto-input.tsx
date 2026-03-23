@@ -39,7 +39,10 @@ export default function MontoInput({
   }
 
   return (
-    <>
+    <div className="flex">
+      <span className="inline-flex items-center rounded-l-lg border border-r-0 border-input bg-muted px-2.5 text-sm text-muted-foreground select-none">
+        $
+      </span>
       <Input
         id={id}
         type="text"
@@ -48,8 +51,9 @@ export default function MontoInput({
         value={display}
         onChange={handleChange}
         required={required}
+        className="rounded-l-none"
       />
       <input type="hidden" name={name} value={raw} />
-    </>
+    </div>
   );
 }

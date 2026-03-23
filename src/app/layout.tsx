@@ -26,10 +26,10 @@ export default function RootLayout({
       className={`${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="font-[family-name:var(--font-inter)] min-h-full flex">
+      <body className="font-[family-name:var(--font-inter)] min-h-dvh flex">
         <ThemeProvider>
           <Sidebar />
-          <main className="flex-1 overflow-auto p-4 pt-16 md:pt-6 md:p-6 lg:p-8">
+          <main className="flex-1 p-4 pt-16 md:pt-6 md:p-6 lg:p-8">
             <div className="max-w-6xl">{children}</div>
           </main>
           <Toaster />

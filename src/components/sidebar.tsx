@@ -59,7 +59,7 @@ export default function Sidebar() {
         <button
           onClick={() => setMobileOpen(true)}
           aria-label="Abrir menú"
-          className="text-muted-foreground hover:text-foreground transition-colors"
+          className="p-2 -m-2 text-muted-foreground hover:text-foreground transition-colors"
         >
           <Menu className="size-5" />
         </button>
@@ -80,8 +80,8 @@ export default function Sidebar() {
       <aside
         className={cn(
           "w-56 border-r bg-muted/20 flex flex-col h-screen sticky top-0",
-          "max-md:fixed max-md:z-50 max-md:bg-background max-md:transition-transform max-md:duration-200",
-          mobileOpen ? "max-md:translate-x-0" : "max-md:-translate-x-full"
+          "max-md:fixed max-md:z-50 max-md:bg-background",
+          mobileOpen ? "" : "max-md:hidden"
         )}
       >
         <div className="p-4 pb-2 flex items-center justify-between">

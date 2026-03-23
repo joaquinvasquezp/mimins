@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { createCliente, updateCliente } from "@/app/clientes/actions";
@@ -50,10 +51,9 @@ export default function ClienteForm({ cliente, onSuccess }: ClienteFormProps) {
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="telefono">Teléfono</Label>
-        <Input
+        <PhoneInput
           id="telefono"
           name="telefono"
-          placeholder="Ej: +56 9 1234 5678"
           defaultValue={cliente?.telefono ?? ""}
           required
         />
@@ -77,9 +77,9 @@ export default function ClienteForm({ cliente, onSuccess }: ClienteFormProps) {
           defaultValue={cliente?.notas ?? ""}
         />
       </div>
-      <Button type="submit">
+      <SubmitButton>
         {cliente ? "Guardar cambios" : "Crear cliente"}
-      </Button>
+      </SubmitButton>
     </form>
   );
 }

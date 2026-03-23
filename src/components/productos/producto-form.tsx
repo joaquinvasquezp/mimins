@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -51,7 +51,7 @@ export default function ProductoForm({ producto, onSuccess }: ProductoFormProps)
           defaultValue={producto?.categoria ?? ""}
         />
       </div>
-      <Button type="submit">{producto ? "Guardar cambios" : "Crear producto"}</Button>
+      <SubmitButton>{producto ? "Guardar cambios" : "Crear producto"}</SubmitButton>
     </form>
   );
 }

@@ -34,15 +34,15 @@ export async function createCliente(formData: FormData) {
     return { error: "El nombre es requerido" };
   }
 
-  if (!telefono || telefono.trim() === "") {
-    return { error: "El teléfono es requerido" };
+  if (!telefono || !/^\+56\d{9}$/.test(telefono)) {
+    return { error: "Teléfono inválido — debe ser un número chileno de 9 dígitos" };
   }
 
   try {
     const cliente = await prisma.cliente.create({
       data: {
         nombre: nombre.trim(),
-        telefono: telefono.trim(),
+        telefono,
         correo: correo?.trim() || null,
         notas: notas?.trim() || null,
       },
@@ -65,8 +65,8 @@ export async function updateCliente(id: number, formData: FormData) {
     return { error: "El nombre es requerido" };
   }
 
-  if (!telefono || telefono.trim() === "") {
-    return { error: "El teléfono es requerido" };
+  if (!telefono || !/^\+56\d{9}$/.test(telefono)) {
+    return { error: "Teléfono inválido — debe ser un número chileno de 9 dígitos" };
   }
 
   try {
@@ -74,7 +74,7 @@ export async function updateCliente(id: number, formData: FormData) {
       where: { id },
       data: {
         nombre: nombre.trim(),
-        telefono: telefono.trim(),
+        telefono,
         correo: correo?.trim() || null,
         notas: notas?.trim() || null,
       },

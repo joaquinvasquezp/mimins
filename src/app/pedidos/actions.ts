@@ -4,6 +4,11 @@ import prisma from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { VALID_ESTADOS, VALID_METODOS } from "@/lib/constants";
 
+/** Parsea "yyyy-mm-dd" como fecha local (mediodía) para evitar desfase por zona horaria */
+function parseLocalDate(iso: string): Date {
+  return new Date(iso + "T12:00:00");
+}
+
 export async function getPedidos() {
   return prisma.pedido.findMany({
     include: {
@@ -50,9 +55,9 @@ export async function createPedido(formData: FormData) {
     const pedido = await prisma.pedido.create({
       data: {
         clienteId,
-        fechaPedido: new Date(fechaPedido),
+        fechaPedido: parseLocalDate(fechaPedido),
         fechaEntregaEstimada: fechaEntregaEstimada
-          ? new Date(fechaEntregaEstimada)
+          ? parseLocalDate(fechaEntregaEstimada)
           : null,
         notas: notas?.trim() || null,
         total: 0,
@@ -94,12 +99,12 @@ export async function updatePedido(id: number, formData: FormData) {
   }
   if (fechaEntregaEstimada !== null) {
     data.fechaEntregaEstimada = fechaEntregaEstimada
-      ? new Date(fechaEntregaEstimada)
+      ? parseLocalDate(fechaEntregaEstimada)
       : null;
   }
   if (fechaEntregaReal !== null) {
     data.fechaEntregaReal = fechaEntregaReal
-      ? new Date(fechaEntregaReal)
+      ? parseLocalDate(fechaEntregaReal)
       : null;
   }
   if (notas !== null) data.notas = notas?.trim() || null;
@@ -267,7 +272,7 @@ export async function addPago(formData: FormData) {
         pedidoId,
         monto,
         metodo,
-        fechaPago: new Date(fechaPago),
+        fechaPago: parseLocalDate(fechaPago),
         notas: notas?.trim() || null,
       },
     });

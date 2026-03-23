@@ -2,8 +2,10 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import SearchSelect from "@/components/ui/combobox";
 import {
@@ -16,6 +18,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { createPedido } from "@/app/pedidos/actions";
 import { createCliente } from "@/app/clientes/actions";
+import { todayISO } from "@/lib/utils";
 
 interface PedidoCreateFormProps {
   clientes: { id: number; nombre: string }[];
@@ -92,11 +95,10 @@ export default function PedidoCreateForm({
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="fechaPedido">Fecha del pedido</Label>
-          <Input
+          <DateInput
             id="fechaPedido"
             name="fechaPedido"
-            type="date"
-            defaultValue={new Date().toISOString().split("T")[0]}
+            defaultValue={todayISO()}
             required
           />
         </div>
@@ -104,10 +106,9 @@ export default function PedidoCreateForm({
           <Label htmlFor="fechaEntregaEstimada">
             Fecha entrega estimada (opcional)
           </Label>
-          <Input
+          <DateInput
             id="fechaEntregaEstimada"
             name="fechaEntregaEstimada"
-            type="date"
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -118,11 +119,11 @@ export default function PedidoCreateForm({
             placeholder="Observaciones del pedido"
           />
         </div>
-        <Button type="submit">Crear pedido</Button>
+        <SubmitButton>Crear pedido</SubmitButton>
       </form>
 
       <Dialog open={showNewCliente} onOpenChange={setShowNewCliente}>
-        <DialogContent className="sm:max-w-xl z-[60]">
+        <DialogContent className="sm:max-w-md z-[60]">
           <DialogHeader>
             <DialogTitle>Nuevo cliente</DialogTitle>
           </DialogHeader>
@@ -133,13 +134,13 @@ export default function PedidoCreateForm({
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="nc-telefono">Teléfono</Label>
-              <Input id="nc-telefono" name="telefono" placeholder="Ej: +56 9 1234 5678" required />
+              <PhoneInput id="nc-telefono" name="telefono" required />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="nc-correo">Correo (opcional)</Label>
               <Input id="nc-correo" name="correo" type="email" placeholder="Ej: maria@correo.cl" />
             </div>
-            <Button type="submit">Crear cliente</Button>
+            <SubmitButton>Crear cliente</SubmitButton>
           </form>
         </DialogContent>
       </Dialog>

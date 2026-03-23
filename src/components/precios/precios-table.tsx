@@ -23,7 +23,7 @@ import { deletePrecio } from "@/app/precios/actions";
 import PrecioEditForm from "./precio-edit-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
-import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
+import { TableSearch, TablePagination, TableEmpty, SortableHead } from "@/components/ui/table-controls";
 
 interface Precio {
   id: number;
@@ -92,6 +92,7 @@ export default function PreciosTable({ precios }: { precios: Precio[] }) {
                     <Button
                       variant="ghost"
                       size="icon-sm"
+                      aria-label="Editar"
                       onClick={() => setEditingPrecio(precio)}
                     >
                       <Pencil />
@@ -99,6 +100,7 @@ export default function PreciosTable({ precios }: { precios: Precio[] }) {
                     <Button
                       variant="ghost"
                       size="icon-sm"
+                      aria-label="Eliminar"
                       onClick={() => setDeleteTarget(precio)}
                     >
                       <Trash2 />
@@ -110,6 +112,7 @@ export default function PreciosTable({ precios }: { precios: Precio[] }) {
           })}
         </TableBody>
       </Table>
+      {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 
       <Dialog

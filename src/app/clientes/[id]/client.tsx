@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { formatMonto } from "@/lib/utils";
+import { formatMonto, formatFecha, formatTelefono } from "@/lib/utils";
 import { ESTADOS_PEDIDO, ESTADO_COLORS } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -57,6 +57,7 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
         <Link
           href="/clientes"
           className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+          aria-label="Volver a clientes"
         >
           <ArrowLeft />
         </Link>
@@ -69,11 +70,19 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
         <div className="grid grid-cols-2 gap-x-6 gap-y-3 text-base">
           <div className="flex flex-col">
             <span className="text-muted-foreground text-sm">Teléfono</span>
-            <span>{cliente.telefono}</span>
+            <a href={`tel:${cliente.telefono}`} className="hover:underline">
+              {formatTelefono(cliente.telefono)}
+            </a>
           </div>
           <div className="flex flex-col">
             <span className="text-muted-foreground text-sm">Correo</span>
-            <span>{cliente.correo || "—"}</span>
+            {cliente.correo ? (
+              <a href={`mailto:${cliente.correo}`} className="hover:underline">
+                {cliente.correo}
+              </a>
+            ) : (
+              <span>—</span>
+            )}
           </div>
           {cliente.notas && (
             <div className="flex flex-col col-span-2">
@@ -83,7 +92,7 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
           )}
           <div className="flex flex-col">
             <span className="text-muted-foreground text-sm">Cliente desde</span>
-            <span>{new Date(cliente.createdAt).toLocaleDateString("es-CL")}</span>
+            <span>{formatFecha(cliente.createdAt)}</span>
           </div>
         </div>
       </section>
@@ -142,7 +151,7 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
                   <TableRow key={pedido.id}>
                     <TableCell className="font-medium">{pedido.id}</TableCell>
                     <TableCell>
-                      {new Date(pedido.fechaPedido).toLocaleDateString("es-CL")}
+                      {formatFecha(pedido.fechaPedido)}
                     </TableCell>
                     <TableCell>
                       <Badge
@@ -167,6 +176,7 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
                         href={`/pedidos/${pedido.id}`}
                         target="_blank"
                         className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                        aria-label="Ver pedido"
                       >
                         <Eye />
                       </Link>

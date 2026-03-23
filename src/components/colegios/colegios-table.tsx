@@ -22,7 +22,7 @@ import { deleteColegio } from "@/app/colegios/actions";
 import ColegioForm from "./colegio-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
-import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
+import { TableSearch, TablePagination, TableEmpty, SortableHead } from "@/components/ui/table-controls";
 
 interface Colegio {
   id: number;
@@ -77,6 +77,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
                   <Button
                     variant="ghost"
                     size="icon-sm"
+                    aria-label="Editar"
                     onClick={() => setEditingColegio(colegio)}
                   >
                     <Pencil />
@@ -84,6 +85,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
                   <Button
                     variant="ghost"
                     size="icon-sm"
+                    aria-label="Eliminar"
                     onClick={() => setDeleteTarget(colegio)}
                   >
                     <Trash2 />
@@ -94,6 +96,7 @@ export default function ColegiosTable({ colegios }: { colegios: Colegio[] }) {
           ))}
         </TableBody>
       </Table>
+      {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 
       <Dialog

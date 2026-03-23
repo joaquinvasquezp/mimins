@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -17,7 +18,11 @@ import { updatePedido } from "@/app/pedidos/actions";
 
 function toDateInput(date: Date | null): string {
   if (!date) return "";
-  return new Date(date).toISOString().split("T")[0];
+  const d = new Date(date);
+  const y = d.toLocaleString("en-CA", { timeZone: "America/Santiago", year: "numeric" });
+  const m = d.toLocaleString("en-CA", { timeZone: "America/Santiago", month: "2-digit" });
+  const day = d.toLocaleString("en-CA", { timeZone: "America/Santiago", day: "2-digit" });
+  return `${y}-${m}-${day}`;
 }
 
 interface PedidoEditFormProps {
@@ -74,19 +79,17 @@ export default function PedidoEditForm({
         <Label htmlFor="fechaEntregaEstimada">
           Fecha entrega estimada
         </Label>
-        <Input
+        <DateInput
           id="fechaEntregaEstimada"
           name="fechaEntregaEstimada"
-          type="date"
           defaultValue={toDateInput(pedido.fechaEntregaEstimada)}
         />
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="fechaEntregaReal">Fecha entrega real</Label>
-        <Input
+        <DateInput
           id="fechaEntregaReal"
           name="fechaEntregaReal"
-          type="date"
           defaultValue={toDateInput(pedido.fechaEntregaReal)}
         />
       </div>
@@ -99,7 +102,7 @@ export default function PedidoEditForm({
           defaultValue={pedido.notas ?? ""}
         />
       </div>
-      <Button type="submit">Guardar cambios</Button>
+      <SubmitButton>Guardar cambios</SubmitButton>
     </form>
   );
 }

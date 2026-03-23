@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { formatMonto } from "@/lib/utils";
+import { formatMonto, formatFecha, formatTelefono } from "@/lib/utils";
 import { ESTADOS_PEDIDO, ESTADO_COLORS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -89,6 +89,7 @@ export default function PedidoDetailClient({
         <Link
           href="/pedidos"
           className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+          aria-label="Volver a pedidos"
         >
           <ArrowLeft />
         </Link>
@@ -116,22 +117,24 @@ export default function PedidoDetailClient({
           </div>
           <div className="flex flex-col">
             <span className="text-muted-foreground text-sm">Teléfono</span>
-            <span>{pedido.cliente.telefono}</span>
+            <a href={`tel:${pedido.cliente.telefono}`} className="hover:underline">
+              {formatTelefono(pedido.cliente.telefono)}
+            </a>
           </div>
           <div className="flex flex-col">
             <span className="text-muted-foreground text-sm">Fecha pedido</span>
-            <span>{new Date(pedido.fechaPedido).toLocaleDateString("es-CL")}</span>
+            <span>{formatFecha(pedido.fechaPedido)}</span>
           </div>
           {pedido.fechaEntregaEstimada && (
             <div className="flex flex-col">
               <span className="text-muted-foreground text-sm">Entrega estimada</span>
-              <span>{new Date(pedido.fechaEntregaEstimada).toLocaleDateString("es-CL")}</span>
+              <span>{formatFecha(pedido.fechaEntregaEstimada)}</span>
             </div>
           )}
           {pedido.fechaEntregaReal && (
             <div className="flex flex-col">
               <span className="text-muted-foreground text-sm">Entrega real</span>
-              <span>{new Date(pedido.fechaEntregaReal).toLocaleDateString("es-CL")}</span>
+              <span>{formatFecha(pedido.fechaEntregaReal)}</span>
             </div>
           )}
           <div className="flex flex-col">
@@ -171,7 +174,7 @@ export default function PedidoDetailClient({
       </section>
 
       <Dialog open={showAddPago} onOpenChange={setShowAddPago}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Registrar pago</DialogTitle>
           </DialogHeader>
@@ -183,7 +186,7 @@ export default function PedidoDetailClient({
       </Dialog>
 
       <Dialog open={showAddItem} onOpenChange={setShowAddItem}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Agregar item</DialogTitle>
           </DialogHeader>

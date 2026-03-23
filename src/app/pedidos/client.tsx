@@ -20,13 +20,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Plus, Eye, Trash2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { cn, formatMonto } from "@/lib/utils";
+import { cn, formatMonto, formatFecha } from "@/lib/utils";
 import { ESTADOS_PEDIDO, ESTADO_COLORS } from "@/lib/constants";
 import { useTableSearch } from "@/lib/use-table-search";
-import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
+import { TableSearch, TablePagination, TableEmpty, SortableHead } from "@/components/ui/table-controls";
 import { toast } from "sonner";
 import { deletePedido } from "./actions";
 import PedidoCreateForm from "@/components/pedidos/pedido-create-form";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Pedido {
   id: number;
@@ -55,6 +56,7 @@ export default function PedidosClient({
 }) {
   const [showCreate, setShowCreate] = useState(openCreate);
   const [estadoFilter, setEstadoFilter] = useState<string | null>(null);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const pedidosFiltrados = estadoFilter
     ? pedidos.filter((p) => p.estado === estadoFilter)
@@ -67,10 +69,9 @@ export default function PedidosClient({
       (ESTADOS_PEDIDO[p.estado] ?? p.estado).toLowerCase().includes(q)
     );
 
-  async function handleDelete(id: number) {
-    if (!confirm(`¿Eliminar pedido #${id} y todos sus items/pagos?`)) return;
-
-    const result = await deletePedido(id);
+  async function handleConfirmDelete() {
+    if (deleteId === null) return;
+    const result = await deletePedido(deleteId);
     if (result.error) {
       toast.error(result.error);
       return;
@@ -140,7 +141,7 @@ export default function PedidosClient({
                 <TableCell className="font-medium">{pedido.id}</TableCell>
                 <TableCell>{pedido.cliente.nombre}</TableCell>
                 <TableCell>
-                  {new Date(pedido.fechaPedido).toLocaleDateString("es-CL")}
+                  {formatFecha(pedido.fechaPedido)}
                 </TableCell>
                 <TableCell>
                   <Badge
@@ -170,13 +171,15 @@ export default function PedidosClient({
                     <Link
                       href={`/pedidos/${pedido.id}`}
                       className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                      aria-label="Ver detalle"
                     >
                       <Eye />
                     </Link>
                     <Button
                       variant="ghost"
                       size="icon-sm"
-                      onClick={() => handleDelete(pedido.id)}
+                      aria-label="Eliminar"
+                      onClick={() => setDeleteId(pedido.id)}
                     >
                       <Trash2 />
                     </Button>
@@ -186,6 +189,7 @@ export default function PedidosClient({
             ))}
           </TableBody>
         </Table>
+        {paged.length === 0 && <TableEmpty search={search} />}
         <TablePagination
           page={page}
           totalPages={totalPages}
@@ -207,6 +211,14 @@ export default function PedidosClient({
           />
         </DialogContent>
       </Dialog>
+
+      <ConfirmDialog
+        open={deleteId !== null}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        title="Eliminar pedido"
+        description={`¿Estás seguro de eliminar el pedido #${deleteId} y todos sus items/pagos? Esta acción no se puede deshacer.`}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

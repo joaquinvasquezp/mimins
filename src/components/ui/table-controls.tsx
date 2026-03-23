@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SearchIcon, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { SearchIcon, ChevronLeft, ChevronRight, ArrowUp, ArrowDown, ArrowUpDown, SearchX } from "lucide-react";
 import { TableHead } from "@/components/ui/table";
 import type { SortState } from "@/lib/use-table-search";
 
@@ -63,6 +63,16 @@ interface TablePaginationProps {
   onPageChange: (page: number) => void;
 }
 
+export function TableEmpty({ search }: { search: string }) {
+  if (!search) return null;
+  return (
+    <div className="flex flex-col items-center gap-2 py-8 text-muted-foreground">
+      <SearchX className="size-8" />
+      <p className="text-sm">No se encontraron resultados para &quot;{search}&quot;</p>
+    </div>
+  );
+}
+
 export function TablePagination({
   page,
   totalPages,
@@ -84,6 +94,7 @@ export function TablePagination({
           <Button
             variant="outline"
             size="icon-sm"
+            aria-label="Página anterior"
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
           >
@@ -95,6 +106,7 @@ export function TablePagination({
           <Button
             variant="outline"
             size="icon-sm"
+            aria-label="Página siguiente"
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
           >

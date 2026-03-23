@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
+import { DateInput } from "@/components/ui/date-input";
 import MontoInput from "@/components/ui/monto-input";
 import { Label } from "@/components/ui/label";
 import {
@@ -15,6 +16,7 @@ import {
 import { toast } from "sonner";
 import { METODOS_PAGO } from "@/lib/constants";
 import { addPago } from "@/app/pedidos/actions";
+import { todayISO } from "@/lib/utils";
 
 interface PagoFormProps {
   pedidoId: number;
@@ -68,11 +70,10 @@ export default function PagoForm({ pedidoId, onSuccess }: PagoFormProps) {
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor="fechaPago">Fecha de pago</Label>
-        <Input
+        <DateInput
           id="fechaPago"
           name="fechaPago"
-          type="date"
-          defaultValue={new Date().toISOString().split("T")[0]}
+          defaultValue={todayISO()}
           required
         />
       </div>
@@ -84,7 +85,7 @@ export default function PagoForm({ pedidoId, onSuccess }: PagoFormProps) {
           placeholder="Observaciones del pago"
         />
       </div>
-      <Button type="submit">Registrar pago</Button>
+      <SubmitButton>Registrar pago</SubmitButton>
     </form>
   );
 }

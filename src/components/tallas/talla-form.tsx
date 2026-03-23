@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -53,7 +53,7 @@ export default function TallaForm({ talla, onSuccess }: TallaFormProps) {
           required
         />
       </div>
-      <Button type="submit">{talla ? "Guardar cambios" : "Crear talla"}</Button>
+      <SubmitButton>{talla ? "Guardar cambios" : "Crear talla"}</SubmitButton>
     </form>
   );
 }

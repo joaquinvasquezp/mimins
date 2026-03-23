@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import MontoInput from "@/components/ui/monto-input";
 import { Label } from "@/components/ui/label";
@@ -102,7 +102,7 @@ export default function ItemForm({
           placeholder="Ej: bordado especial, tela diferente"
         />
       </div>
-      <Button type="submit">Agregar item</Button>
+      <SubmitButton>Agregar item</SubmitButton>
     </form>
   );
 }

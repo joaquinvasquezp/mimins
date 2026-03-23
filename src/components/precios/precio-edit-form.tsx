@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import MontoInput from "@/components/ui/monto-input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -47,7 +47,7 @@ export default function PrecioEditForm({ precio, onSuccess }: PrecioEditFormProp
           required
         />
       </div>
-      <Button type="submit">Guardar cambios</Button>
+      <SubmitButton>Guardar cambios</SubmitButton>
     </form>
   );
 }

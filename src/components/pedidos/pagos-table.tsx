@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatMonto } from "@/lib/utils";
+import { formatMonto, formatFecha } from "@/lib/utils";
 import { METODOS_PAGO } from "@/lib/constants";
 import {
   Table,
@@ -64,7 +64,7 @@ export default function PagosTable({ pagos }: { pagos: Pago[] }) {
           {pagos.map((pago) => (
             <TableRow key={pago.id}>
               <TableCell>
-                {new Date(pago.fechaPago).toLocaleDateString("es-CL")}
+                {formatFecha(pago.fechaPago)}
               </TableCell>
               <TableCell>
                 {METODOS_PAGO[pago.metodo] ?? pago.metodo}
@@ -79,6 +79,7 @@ export default function PagosTable({ pagos }: { pagos: Pago[] }) {
                 <Button
                   variant="ghost"
                   size="icon-sm"
+                  aria-label="Eliminar pago"
                   onClick={() => setDeleteId(pago.id)}
                 >
                   <Trash2 />

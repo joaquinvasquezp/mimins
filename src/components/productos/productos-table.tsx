@@ -22,7 +22,7 @@ import { deleteProducto } from "@/app/productos/actions";
 import ProductoForm from "./producto-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
-import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
+import { TableSearch, TablePagination, TableEmpty, SortableHead } from "@/components/ui/table-controls";
 
 interface Producto {
   id: number;
@@ -80,6 +80,7 @@ export default function ProductosTable({ productos }: { productos: Producto[] })
                   <Button
                     variant="ghost"
                     size="icon-sm"
+                    aria-label="Editar"
                     onClick={() => setEditingProducto(producto)}
                   >
                     <Pencil />
@@ -87,6 +88,7 @@ export default function ProductosTable({ productos }: { productos: Producto[] })
                   <Button
                     variant="ghost"
                     size="icon-sm"
+                    aria-label="Eliminar"
                     onClick={() => setDeleteTarget(producto)}
                   >
                     <Trash2 />
@@ -97,6 +99,7 @@ export default function ProductosTable({ productos }: { productos: Producto[] })
           ))}
         </TableBody>
       </Table>
+      {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination page={page} totalPages={totalPages} totalFiltered={totalFiltered} totalItems={totalItems} onPageChange={setPage} />
 
       <Dialog

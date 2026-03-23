@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import { useState } from "react"
 import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { cn } from "@/lib/utils"
@@ -33,26 +32,21 @@ export default function SearchSelect({
   const currentValue = isControlled ? controlledValue : internalValue
   const filter = ComboboxPrimitive.useFilter({ sensitivity: "base" })
 
-  function handleValueChange(val: unknown) {
+  const selectedItem = items.find((i) => i.value === currentValue) ?? null
+
+  function handleValueChange(val: SearchSelectItem | null) {
     if (val == null) return
-    const strVal = val as string
-    if (!isControlled) setInternalValue(strVal)
-    if (onValueChange) onValueChange(strVal)
+    if (!isControlled) setInternalValue(val.value)
+    onValueChange?.(val.value)
   }
 
   return (
     <ComboboxPrimitive.Root
-      value={currentValue || null}
+      value={selectedItem}
       onValueChange={handleValueChange}
       items={items}
-      itemToStringLabel={(item: unknown) => (item as SearchSelectItem).label}
-      itemToStringValue={(item: unknown) => (item as SearchSelectItem).value}
-      filter={(item: unknown, inputValue: string) =>
-        filter.contains(
-          (item as SearchSelectItem).label,
-          inputValue
-        )
-      }
+      isItemEqualToValue={(a, b) => a.value === b.value}
+      filter={(item, inputValue) => filter.contains(item.label, inputValue)}
     >
       <ComboboxPrimitive.InputGroup
         className={cn(
@@ -90,7 +84,7 @@ export default function SearchSelect({
               {(item: SearchSelectItem) => (
                 <ComboboxPrimitive.Item
                   key={item.value}
-                  value={item.value}
+                  value={item}
                   className="relative flex w-full cursor-default items-center gap-1.5 rounded-md py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50"
                 >
                   {item.label}

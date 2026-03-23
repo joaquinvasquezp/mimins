@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -51,7 +51,7 @@ export default function ColegioForm({ colegio, onSuccess }: ColegioFormProps) {
           defaultValue={colegio?.notas ?? ""}
         />
       </div>
-      <Button type="submit">{colegio ? "Guardar cambios" : "Crear colegio"}</Button>
+      <SubmitButton>{colegio ? "Guardar cambios" : "Crear colegio"}</SubmitButton>
     </form>
   );
 }

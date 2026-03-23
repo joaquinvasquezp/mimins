@@ -84,6 +84,7 @@ export default function PedidoItemsTable({ items }: { items: Item[] }) {
               <Button
                 variant="ghost"
                 size="icon-sm"
+                aria-label="Eliminar item"
                 onClick={() => setDeleteId(item.id)}
               >
                 <Trash2 />

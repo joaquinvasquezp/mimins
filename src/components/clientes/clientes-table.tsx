@@ -21,10 +21,11 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { toast } from "sonner";
 import { deleteCliente } from "@/app/clientes/actions";
+import { formatTelefono } from "@/lib/utils";
 import ClienteForm from "./cliente-form";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useTableSearch } from "@/lib/use-table-search";
-import { TableSearch, TablePagination, SortableHead } from "@/components/ui/table-controls";
+import { TableSearch, TablePagination, TableEmpty, SortableHead } from "@/components/ui/table-controls";
 
 interface Cliente {
   id: number;
@@ -79,7 +80,7 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
           {paged.map((cliente) => (
             <TableRow key={cliente.id}>
               <TableCell className="font-medium">{cliente.nombre}</TableCell>
-              <TableCell>{cliente.telefono}</TableCell>
+              <TableCell>{formatTelefono(cliente.telefono)}</TableCell>
               <TableCell className="text-muted-foreground">
                 {cliente.correo || "—"}
               </TableCell>
@@ -91,12 +92,14 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
                   <Link
                     href={`/clientes/${cliente.id}`}
                     className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+                    aria-label="Ver detalle"
                   >
                     <Eye />
                   </Link>
                   <Button
                     variant="ghost"
                     size="icon-sm"
+                    aria-label="Editar"
                     onClick={() => setEditingCliente(cliente)}
                   >
                     <Pencil />
@@ -104,6 +107,7 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
                   <Button
                     variant="ghost"
                     size="icon-sm"
+                    aria-label="Eliminar"
                     onClick={() => setDeleteTarget(cliente)}
                   >
                     <Trash2 />
@@ -114,6 +118,7 @@ export default function ClientesTable({ clientes }: { clientes: Cliente[] }) {
           ))}
         </TableBody>
       </Table>
+      {paged.length === 0 && <TableEmpty search={search} />}
       <TablePagination
         page={page}
         totalPages={totalPages}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Input } from "@/components/ui/input";
 import MontoInput from "@/components/ui/monto-input";
 import { Label } from "@/components/ui/label";
@@ -78,7 +78,7 @@ export default function PrecioForm({
           required
         />
       </div>
-      <Button type="submit">Crear precio</Button>
+      <SubmitButton>Crear precio</SubmitButton>
     </form>
   );
 }

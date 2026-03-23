@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { formatMonto, formatFecha } from "@/lib/utils";
+import { cn, formatMonto, formatFecha } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -27,10 +27,22 @@ import { TableSearch, TablePagination, TableEmpty, SortableHead } from "@/compon
 
 interface Precio {
   id: number;
+  colegioId: number;
+  tallaId: number;
   precioVenta: number;
   producto: { nombre: string };
   colegio: { nombre: string };
   talla: { nombre: string };
+}
+
+interface Colegio {
+  id: number;
+  nombre: string;
+}
+
+interface Talla {
+  id: number;
+  nombre: string;
 }
 
 interface HistorialEntry {
@@ -40,14 +52,23 @@ interface HistorialEntry {
   fechaCambio: Date;
 }
 
-export default function PreciosTable({ precios }: { precios: Precio[] }) {
+export default function PreciosTable({ precios, colegios, tallas }: { precios: Precio[]; colegios: Colegio[]; tallas: Talla[] }) {
   const [editingPrecio, setEditingPrecio] = useState<Precio | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Precio | null>(null);
   const [historialTarget, setHistorialTarget] = useState<Precio | null>(null);
   const [historial, setHistorial] = useState<HistorialEntry[]>([]);
   const [loadingHistorial, setLoadingHistorial] = useState(false);
+  const [colegioFilter, setColegioFilter] = useState<number | null>(null);
+  const [tallaFilter, setTallaFilter] = useState<number | null>(null);
+
+  const preciosFiltrados = precios.filter((p) => {
+    if (colegioFilter && p.colegioId !== colegioFilter) return false;
+    if (tallaFilter && p.tallaId !== tallaFilter) return false;
+    return true;
+  });
+
   const { search, setSearch, page, setPage, totalPages, paged, totalFiltered, totalItems, sort, toggleSort } =
-    useTableSearch(precios, (p, q) =>
+    useTableSearch(preciosFiltrados, (p, q) =>
       p.producto.nombre.toLowerCase().includes(q) ||
       p.colegio.nombre.toLowerCase().includes(q) ||
       p.talla.nombre.toLowerCase().includes(q)
@@ -85,6 +106,66 @@ export default function PreciosTable({ precios }: { precios: Precio[] }) {
 
   return (
     <>
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground shrink-0 w-14">Colegio</span>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setColegioFilter(null)}
+            className={cn(
+              "rounded-full border px-3 py-1 text-sm transition-colors",
+              colegioFilter === null
+                ? "bg-foreground text-background border-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Todos
+          </button>
+          {colegios.map((col) => (
+            <button
+              key={col.id}
+              onClick={() => setColegioFilter(colegioFilter === col.id ? null : col.id)}
+              className={cn(
+                "rounded-full border px-3 py-1 text-sm transition-colors",
+                colegioFilter === col.id
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {col.nombre}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="text-xs font-medium text-muted-foreground shrink-0 w-14">Talla</span>
+        <div className="flex flex-wrap gap-1.5">
+          <button
+            onClick={() => setTallaFilter(null)}
+            className={cn(
+              "rounded-full border px-3 py-1 text-sm transition-colors",
+              tallaFilter === null
+                ? "bg-foreground text-background border-foreground"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            Todas
+          </button>
+          {tallas.map((talla) => (
+            <button
+              key={talla.id}
+              onClick={() => setTallaFilter(tallaFilter === talla.id ? null : talla.id)}
+              className={cn(
+                "rounded-full border px-3 py-1 text-sm transition-colors",
+                tallaFilter === talla.id
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {talla.nombre}
+            </button>
+          ))}
+        </div>
+      </div>
       <TableSearch value={search} onChange={setSearch} placeholder="Buscar por producto, colegio, talla..." />
       <div className="overflow-x-auto"><Table>
         <TableHeader>

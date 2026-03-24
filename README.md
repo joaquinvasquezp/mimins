@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Mimins
 
-## Getting Started
+Sistema de gestión de pedidos para una tienda de uniformes escolares. Permite registrar clientes, productos, precios por colegio/talla, y hacer seguimiento de pedidos con pagos parciales.
 
-First, run the development server:
+## Funcionalidades
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Dashboard** con resumen de pedidos activos y métricas generales
+- **Colegios** — CRUD completo con historial de pedidos y clientes
+- **Clientes** — CRUD con teléfono chileno (+56), vinculados a un colegio
+- **Productos** — catálogo de prendas (buzos, poleras, pantalones, etc.)
+- **Tallas** — gestión de tallas disponibles
+- **Precios** — tabla de precios por colegio + talla, con historial de cambios
+- **Pedidos** — creación, edición de items, pagos parciales y cambio de estado rápido
+- **Autenticación** — login con cookie JWT firmada (solo en producción)
+- **Dark mode** — toggle en sidebar
+
+## Stack
+
+| Capa | Tecnología |
+|---|---|
+| Framework | Next.js 16.2 (App Router, Turbopack) |
+| Lenguaje | TypeScript + React 19 |
+| ORM | Prisma 7.5 + SQLite (better-sqlite3) |
+| UI | shadcn/ui (base-nova) + Tailwind CSS v4 + Base UI |
+| Auth | jose (JWT firmado, cookie HttpOnly) |
+| Runtime | Node.js v24 LTS |
+
+## Arquitectura
+
+Cada entidad sigue el mismo patrón:
+
+```
+src/app/[entidad]/
+  actions.ts   ← Server Actions ("use server")
+  page.tsx     ← Server Component (force-dynamic)
+  client.tsx   ← Client Component con estado UI
+
+src/components/[entidad]/
+  *-form.tsx   ← Formulario
+  *-table.tsx  ← Tabla con búsqueda/paginación
+
+src/components/ui/   ← Componentes compartidos
+src/lib/             ← Prisma singleton, utils, constantes, hooks
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Desarrollo local
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npx prisma migrate dev
+npm run dev          # http://localhost:3001
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Para poblar con datos de prueba:
 
-## Learn More
+```bash
+node prisma/seed.mjs
+```
 
-To learn more about Next.js, take a look at the following resources:
+> El servidor de desarrollo corre en el puerto **3001** con `--hostname 0.0.0.0` para acceso LAN.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Variables de entorno
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Crear un archivo `.env` en la raíz:
 
-## Deploy on Vercel
+```env
+DATABASE_PATH=db/dev.db
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Solo requerido en producción
+AUTH_USER=
+AUTH_PASSWORD=
+SESSION_SECRET=
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Producción
+
+El servidor de producción corre en un LXC (`mimins-prod`) gestionado con PM2.
+
+**Deploy:**
+
+```bash
+git pull
+npm install
+npx prisma migrate deploy
+npm run build
+pm2 restart mimins
+```
+
+La base de datos tiene backup diario automático vía crontab (3 AM) hacia `db/backups/`, con rotación de 30 copias máximo.
+
+Ver `docs/setup-ambientes.md` para la configuración completa de ambientes.
+
+## Estructura de la base de datos
+
+```
+Colegio ──< Cliente ──< Pedido ──< ItemPedido >── Producto
+                                         │
+                                    Talla + Precio (por colegio)
+```
+
+Un cliente pertenece siempre a un solo colegio. Al agregar items a un pedido, solo se muestran los productos y precios correspondientes al colegio del cliente.

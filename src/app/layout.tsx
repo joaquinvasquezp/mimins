@@ -26,7 +26,7 @@ export default function RootLayout({
       className={`${inter.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="font-[family-name:var(--font-inter)] min-h-dvh flex">
+      <body className="min-h-dvh flex">
         <ThemeProvider>
           <Sidebar />
           <main className="flex-1 p-4 pt-16 md:pt-6 md:p-6 lg:p-8">

@@ -104,19 +104,19 @@ export default function ClienteDetailClient({ cliente }: { cliente: Cliente }) {
 
       {/* Resumen */}
       <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <div className="rounded-lg border bg-zinc-100/60 p-4 flex flex-col gap-1">
+        <div className="rounded-lg border bg-zinc-100/60 dark:bg-zinc-800/40 p-4 flex flex-col gap-1">
           <span className="text-muted-foreground text-sm">Total pedidos</span>
           <span className="text-2xl font-bold">{totalPedidos}</span>
         </div>
-        <div className="rounded-lg border bg-blue-50 p-4 flex flex-col gap-1">
+        <div className="rounded-lg border bg-blue-50 dark:bg-blue-950/40 p-4 flex flex-col gap-1">
           <span className="text-muted-foreground text-sm">Activos</span>
           <span className="text-2xl font-bold">{pedidosActivos.length}</span>
         </div>
-        <div className="rounded-lg border bg-emerald-50 p-4 flex flex-col gap-1">
+        <div className="rounded-lg border bg-emerald-50 dark:bg-emerald-950/40 p-4 flex flex-col gap-1">
           <span className="text-muted-foreground text-sm">Total gastado</span>
           <span className="text-2xl font-bold">{formatMonto(totalGastado)}</span>
         </div>
-        <div className="rounded-lg border bg-amber-50 p-4 flex flex-col gap-1">
+        <div className="rounded-lg border bg-amber-50 dark:bg-amber-950/40 p-4 flex flex-col gap-1">
           <span className="text-muted-foreground text-sm">Pagado</span>
           <span className="text-2xl font-bold">{formatMonto(totalPagado)}</span>
           {totalPendiente > 0 && (
